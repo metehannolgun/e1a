@@ -7,7 +7,7 @@ import Progress from './pages/Progress';
 import Settings from './pages/Settings';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useSpacedRepetition } from './hooks/useSpacedRepetition';
-import { updateStreak } from './utils/streakTracker';
+import { updateStreak, getTodayKey } from './utils/streakTracker';
 import { categories } from './data/vocabulary';
 
 export default function App() {
@@ -50,7 +50,7 @@ export default function App() {
   }, [getCategoryProgress, setBadges]);
 
   const handleFlashcardProgress = useCallback((wordId, wasKnown) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayKey();
     const newStreak = updateStreak(streakData);
     setStreakData(newStreak);
     setQuizStats(prev => ({
