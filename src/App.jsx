@@ -9,12 +9,14 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import { useSpacedRepetition } from './hooks/useSpacedRepetition';
 import { updateStreak, getTodayKey } from './utils/streakTracker';
 import { categories } from './data/vocabulary';
+import { themes, defaultTheme } from './data/themes';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [soundEnabled, setSoundEnabled] = useLocalStorage('soundEnabled', true);
   const [darkMode, setDarkMode] = useLocalStorage('darkMode', false);
+  const [theme, setTheme] = useLocalStorage('theme', defaultTheme);
   const [streakData, setStreakData] = useLocalStorage('streakData', { currentStreak: 0, longestStreak: 0, lastPracticeDate: null });
   const [badges, setBadges] = useLocalStorage('badges', []);
   const [quizStats, setQuizStats] = useLocalStorage('quizStats', { totalQuizzes: 0, totalCorrect: 0, totalAnswered: 0, todayWords: 0 });
@@ -93,6 +95,7 @@ export default function App() {
         setCurrentPage={setCurrentPage}
         onCategorySelect={setSelectedCategory}
         darkMode={darkMode}
+        theme={theme}
       />
     ),
     flashcards: (
@@ -102,12 +105,14 @@ export default function App() {
         onProgress={handleFlashcardProgress}
         soundEnabled={soundEnabled}
         darkMode={darkMode}
+        theme={theme}
       />
     ),
     quiz: (
       <QuizPage
         onQuizComplete={handleQuizComplete}
         darkMode={darkMode}
+        theme={theme}
       />
     ),
     progress: (
@@ -117,6 +122,7 @@ export default function App() {
         badges={badges}
         quizStats={quizStats}
         darkMode={darkMode}
+        theme={theme}
       />
     ),
     settings: (
@@ -125,6 +131,8 @@ export default function App() {
         setSoundEnabled={setSoundEnabled}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
+        theme={theme}
+        setTheme={setTheme}
         onResetProgress={handleResetProgress}
       />
     ),
@@ -132,7 +140,7 @@ export default function App() {
 
   return (
     <div className={darkMode ? 'dark' : ''}>
-      <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} darkMode={darkMode} />
+      <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} darkMode={darkMode} theme={theme} />
       {pages[currentPage] || pages.dashboard}
     </div>
   );

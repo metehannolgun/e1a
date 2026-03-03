@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { themes, defaultTheme } from '../data/themes';
 
-export default function Navbar({ currentPage, setCurrentPage, darkMode }) {
+export default function Navbar({ currentPage, setCurrentPage, darkMode, theme }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const t = themes[theme] || themes[defaultTheme];
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', emoji: '🏠' },
@@ -12,7 +14,7 @@ export default function Navbar({ currentPage, setCurrentPage, darkMode }) {
   ];
 
   return (
-    <nav className={`${darkMode ? 'bg-gray-900 text-white' : 'bg-red-700 text-white'} shadow-lg`}>
+    <nav className={`${darkMode ? 'bg-gray-900 text-white' : `${t.navBg} text-white`} shadow-lg`}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => setCurrentPage('dashboard')}>
@@ -27,8 +29,8 @@ export default function Navbar({ currentPage, setCurrentPage, darkMode }) {
                 onClick={() => setCurrentPage(item.id)}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   currentPage === item.id
-                    ? 'bg-white text-red-700'
-                    : 'hover:bg-red-600'
+                    ? `bg-white ${t.navActiveText}`
+                    : t.navHover
                 }`}
               >
                 {item.emoji} {item.label}
@@ -37,7 +39,7 @@ export default function Navbar({ currentPage, setCurrentPage, darkMode }) {
           </div>
 
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-red-600"
+            className={`md:hidden p-2 rounded-lg ${t.navHover}`}
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             {mobileOpen ? '✕' : '☰'}
@@ -52,8 +54,8 @@ export default function Navbar({ currentPage, setCurrentPage, darkMode }) {
                 onClick={() => { setCurrentPage(item.id); setMobileOpen(false); }}
                 className={`px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors ${
                   currentPage === item.id
-                    ? 'bg-white text-red-700'
-                    : 'hover:bg-red-600'
+                    ? `bg-white ${t.navActiveText}`
+                    : t.navHover
                 }`}
               >
                 {item.emoji} {item.label}

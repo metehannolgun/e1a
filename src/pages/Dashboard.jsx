@@ -5,8 +5,10 @@ import ProgressBar from '../components/ProgressBar';
 import StreakCounter from '../components/StreakCounter';
 import { BadgeDisplay } from '../components/Badge';
 import CategoryCard from '../components/CategoryCard';
+import { themes, defaultTheme } from '../data/themes';
 
-export default function Dashboard({ wordProgress, streakData, badges, quizStats, setCurrentPage, onCategorySelect, darkMode }) {
+export default function Dashboard({ wordProgress, streakData, badges, quizStats, setCurrentPage, onCategorySelect, darkMode, theme }) {
+  const t = themes[theme] || themes[defaultTheme];
   const totalWords = allWords.length;
   const masteredWords = Object.values(wordProgress).filter(p => p.level >= 5).length;
   const learnedWords = Object.values(wordProgress).filter(p => p.lastSeen).length;
@@ -28,7 +30,7 @@ export default function Dashboard({ wordProgress, streakData, badges, quizStats,
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50'} p-4 md:p-8`}>
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-red-600 mb-1">¡Bienvenido! 🇪🇸</h1>
+          <h1 className={`text-3xl font-bold ${t.accentText} mb-1`}>¡Bienvenido! 🇪🇸</h1>
           <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             {practiced ? "¡Muy bien! You've practiced today! Keep it up! 🔥" : 'Start practicing to keep your streak alive!'}
           </p>
@@ -43,7 +45,7 @@ export default function Dashboard({ wordProgress, streakData, badges, quizStats,
           ].map((stat, i) => (
             <div key={i} className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow p-4`}>
               <div className="text-2xl mb-1">{stat.emoji}</div>
-              <div className="text-2xl font-bold text-red-600">{stat.value}</div>
+              <div className={`text-2xl font-bold ${t.accentText}`}>{stat.value}</div>
               <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{stat.label}</div>
               {stat.total && <div className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>of {stat.total}</div>}
             </div>
@@ -68,7 +70,7 @@ export default function Dashboard({ wordProgress, streakData, badges, quizStats,
 
         <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow p-6 mb-6`}>
           <h2 className="text-xl font-bold mb-4">Overall Progress</h2>
-          <ProgressBar value={masteredWords} max={totalWords} color="bg-red-500" label="Words Mastered" />
+          <ProgressBar value={masteredWords} max={totalWords} color={t.progressBar} label="Words Mastered" />
           <div className="mt-4">
             <ProgressBar value={learnedWords} max={totalWords} color="bg-yellow-500" label="Words Seen" />
           </div>
@@ -84,6 +86,7 @@ export default function Dashboard({ wordProgress, streakData, badges, quizStats,
                 mastered={getCategoryMastered(cat.id)}
                 total={cat.words.length}
                 onClick={() => { onCategorySelect(cat.id); setCurrentPage('flashcards'); }}
+                theme={theme}
               />
             ))}
           </div>

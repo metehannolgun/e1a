@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { allWords, categories } from '../data/vocabulary';
+import { themes, defaultTheme } from '../data/themes';
 
 function shuffle(arr) {
   const a = [...arr];
@@ -16,12 +17,13 @@ function generateMCQuestion(word, pool) {
   return { word, options, correctId: word.id, type: 'mc' };
 }
 
-function MultipleChoiceQuiz({ questions, onComplete, darkMode }) {
+function MultipleChoiceQuiz({ questions, onComplete, darkMode, theme }) {
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
+  const t = themes[theme] || themes[defaultTheme];
 
   const q = questions[current];
 
@@ -59,12 +61,12 @@ function MultipleChoiceQuiz({ questions, onComplete, darkMode }) {
 
       <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-lg p-6 mb-4`}>
         <p className={`text-sm mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>What does this mean in English?</p>
-        <p className="text-4xl font-bold text-red-600 mb-6 text-center">{q.word.spanish}</p>
+        <p className={`text-4xl font-bold ${t.accentText} mb-6 text-center`}>{q.word.spanish}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {q.options.map(option => {
             let btnClass = 'p-3 rounded-xl border-2 text-left transition-all font-medium ';
             if (!showFeedback) {
-              btnClass += darkMode ? 'border-gray-600 hover:border-red-400 text-white' : 'border-gray-200 hover:border-red-400';
+              btnClass += darkMode ? `border-gray-600 ${t.quizHoverBorder} text-white` : `border-gray-200 ${t.quizHoverBorder}`;
             } else if (option.id === q.correctId) {
               btnClass += 'border-green-500 bg-green-50 text-green-700';
             } else if (option.id === selected) {
@@ -88,7 +90,7 @@ function MultipleChoiceQuiz({ questions, onComplete, darkMode }) {
       )}
 
       {showFeedback && (
-        <button onClick={handleNext} className="w-full py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors">
+        <button onClick={handleNext} className={`w-full py-3 ${t.buttonBg} text-white rounded-xl font-bold ${t.buttonHover} transition-colors`}>
           {current + 1 >= questions.length ? 'See Results' : 'Next Question →'}
         </button>
       )}
@@ -96,11 +98,12 @@ function MultipleChoiceQuiz({ questions, onComplete, darkMode }) {
   );
 }
 
-function FillInBlankQuiz({ questions, onComplete, darkMode }) {
+function FillInBlankQuiz({ questions, onComplete, darkMode, theme }) {
   const [current, setCurrent] = useState(0);
   const [input, setInput] = useState('');
   const [score, setScore] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
+  const t = themes[theme] || themes[defaultTheme];
 
   const q = questions[current];
 
@@ -157,12 +160,12 @@ function FillInBlankQuiz({ questions, onComplete, darkMode }) {
             className={`w-full p-3 rounded-xl border-2 text-lg outline-none ${
               showFeedback
                 ? isCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
-                : 'border-gray-300 focus:border-red-400'
+                : `border-gray-300 ${t.inputFocusBorder}`
             } ${darkMode ? 'bg-gray-700 text-white' : ''}`}
             autoComplete="off"
           />
           {!showFeedback && (
-            <button type="submit" className="w-full mt-3 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors">
+            <button type="submit" className={`w-full mt-3 py-3 ${t.buttonBg} text-white rounded-xl font-bold ${t.buttonHover} transition-colors`}>
               Check Answer
             </button>
           )}
@@ -176,7 +179,7 @@ function FillInBlankQuiz({ questions, onComplete, darkMode }) {
       )}
 
       {showFeedback && (
-        <button onClick={handleNext} className="w-full py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors">
+        <button onClick={handleNext} className={`w-full py-3 ${t.buttonBg} text-white rounded-xl font-bold ${t.buttonHover} transition-colors`}>
           {current + 1 >= questions.length ? 'See Results' : 'Next Question →'}
         </button>
       )}
@@ -184,23 +187,25 @@ function FillInBlankQuiz({ questions, onComplete, darkMode }) {
   );
 }
 
-function ResultsScreen({ result, onRestart, darkMode }) {
+function ResultsScreen({ result, onRestart, darkMode, theme }) {
+  const t = themes[theme] || themes[defaultTheme];
   const pct = Math.round((result.finalScore / result.total) * 100);
   const msg = pct === 100 ? '¡Perfecto! 🏆' : pct >= 80 ? '¡Muy bien! 🎉' : pct >= 60 ? '¡Sigue así! 💪' : 'Keep practicing! 📖';
   return (
     <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-lg p-8 text-center max-w-md mx-auto`}>
       <div className="text-6xl mb-4">{pct === 100 ? '🏆' : pct >= 80 ? '⭐' : '📚'}</div>
       <h2 className="text-3xl font-bold mb-2">{msg}</h2>
-      <p className="text-5xl font-bold text-red-600 mb-2">{result.finalScore}/{result.total}</p>
+      <p className={`text-5xl font-bold ${t.accentText} mb-2`}>{result.finalScore}/{result.total}</p>
       <p className={`text-xl mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{pct}% correct</p>
-      <button onClick={onRestart} className="px-8 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors">
+      <button onClick={onRestart} className={`px-8 py-3 ${t.buttonBg} text-white rounded-xl font-bold ${t.buttonHover} transition-colors`}>
         Try Again
       </button>
     </div>
   );
 }
 
-export default function QuizPage({ onQuizComplete, darkMode }) {
+export default function QuizPage({ onQuizComplete, darkMode, theme }) {
+  const t = themes[theme] || themes[defaultTheme];
   const [quizType, setQuizType] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [result, setResult] = useState(null);
@@ -235,7 +240,7 @@ export default function QuizPage({ onQuizComplete, darkMode }) {
   if (result) {
     return (
       <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50'} p-4 md:p-8`}>
-        <ResultsScreen result={result} onRestart={handleRestart} darkMode={darkMode} />
+        <ResultsScreen result={result} onRestart={handleRestart} darkMode={darkMode} theme={theme} />
       </div>
     );
   }
@@ -243,7 +248,7 @@ export default function QuizPage({ onQuizComplete, darkMode }) {
   if (quizType === 'mc') {
     return (
       <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50'} p-4 md:p-8`}>
-        <MultipleChoiceQuiz questions={questions} onComplete={handleComplete} darkMode={darkMode} />
+        <MultipleChoiceQuiz questions={questions} onComplete={handleComplete} darkMode={darkMode} theme={theme} />
       </div>
     );
   }
@@ -251,7 +256,7 @@ export default function QuizPage({ onQuizComplete, darkMode }) {
   if (quizType === 'fill') {
     return (
       <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50'} p-4 md:p-8`}>
-        <FillInBlankQuiz questions={questions} onComplete={handleComplete} darkMode={darkMode} />
+        <FillInBlankQuiz questions={questions} onComplete={handleComplete} darkMode={darkMode} theme={theme} />
       </div>
     );
   }
@@ -259,7 +264,7 @@ export default function QuizPage({ onQuizComplete, darkMode }) {
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50'} p-4 md:p-8`}>
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-red-600 mb-2">🧠 Quizzes</h1>
+        <h1 className={`text-3xl font-bold ${t.accentText} mb-2`}>🧠 Quizzes</h1>
         <p className={`mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Test your Spanish knowledge!</p>
 
         <div className="mb-6">
@@ -279,7 +284,7 @@ export default function QuizPage({ onQuizComplete, darkMode }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => startQuiz('mc')}
-            className="p-6 bg-gradient-to-br from-red-500 to-orange-400 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+            className={`p-6 bg-gradient-to-br ${t.mcGradient} text-white rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1`}
           >
             <div className="text-4xl mb-2">🎯</div>
             <h2 className="text-xl font-bold mb-1">Multiple Choice</h2>

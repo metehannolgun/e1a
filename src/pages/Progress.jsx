@@ -2,8 +2,10 @@ import React from 'react';
 import { categories, allWords } from '../data/vocabulary';
 import ProgressBar from '../components/ProgressBar';
 import { BadgeDisplay } from '../components/Badge';
+import { themes, defaultTheme } from '../data/themes';
 
-export default function Progress({ wordProgress, streakData, badges, quizStats, darkMode }) {
+export default function Progress({ wordProgress, streakData, badges, quizStats, darkMode, theme }) {
+  const t = themes[theme] || themes[defaultTheme];
   const totalWords = allWords.length;
   const masteredWords = Object.values(wordProgress).filter(p => p.level >= 5).length;
   const learnedWords = Object.values(wordProgress).filter(p => p.lastSeen).length;
@@ -21,7 +23,7 @@ export default function Progress({ wordProgress, streakData, badges, quizStats, 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50'} p-4 md:p-8`}>
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-red-600 mb-6">📊 Your Progress</h1>
+        <h1 className={`text-3xl font-bold ${t.accentText} mb-6`}>📊 Your Progress</h1>
 
         <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow p-6 mb-6`}>
           <h2 className="text-xl font-bold mb-4">🔥 Streaks</h2>
@@ -46,7 +48,7 @@ export default function Progress({ wordProgress, streakData, badges, quizStats, 
           <div className="space-y-3">
             {['🔴 Level 1 (New)', '🟠 Level 2', '🟡 Level 3', '🔵 Level 4', '🟢 Level 5 (Mastered)'].map((label, i) => (
               <ProgressBar key={i} value={levelCounts[i]} max={totalWords} label={label} color={
-                i === 4 ? 'bg-green-500' : i === 3 ? 'bg-blue-500' : i === 2 ? 'bg-yellow-500' : i === 1 ? 'bg-orange-500' : 'bg-red-500'
+                i === 4 ? 'bg-green-500' : i === 3 ? 'bg-blue-500' : i === 2 ? 'bg-yellow-500' : i === 1 ? 'bg-orange-500' : t.progressBar
               } />
             ))}
           </div>
@@ -63,7 +65,7 @@ export default function Progress({ wordProgress, streakData, badges, quizStats, 
                     <span>{cat.emoji}</span>
                     <span className="font-medium">{cat.name}</span>
                   </div>
-                  <ProgressBar value={mastered} max={cat.words.length} color="bg-red-500" label={`${mastered}/${cat.words.length} mastered`} />
+                  <ProgressBar value={mastered} max={cat.words.length} color={t.progressBar} label={`${mastered}/${cat.words.length} mastered`} />
                 </div>
               );
             })}

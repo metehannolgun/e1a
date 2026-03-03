@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useSpeech } from '../hooks/useSpeech';
+import { themes, defaultTheme } from '../data/themes';
 
-export default function FlashCard({ word, onKnown, onLearning, progress, soundEnabled = true }) {
+export default function FlashCard({ word, onKnown, onLearning, progress, soundEnabled = true, theme }) {
   const [flipped, setFlipped] = useState(false);
   const { speak } = useSpeech();
+  const t = themes[theme] || themes[defaultTheme];
 
   const level = progress?.level || 1;
   const levelColors = ['', 'bg-red-100', 'bg-orange-100', 'bg-yellow-100', 'bg-blue-100', 'bg-green-100'];
@@ -37,7 +39,7 @@ export default function FlashCard({ word, onKnown, onLearning, progress, soundEn
           className={`card-flip w-full h-full cursor-pointer ${flipped ? 'flipped' : ''}`}
           onClick={() => setFlipped(f => !f)}
         >
-          <div className="card-face w-full h-full rounded-2xl shadow-xl bg-gradient-to-br from-red-500 to-orange-400 flex flex-col items-center justify-center p-6 select-none">
+          <div className={`card-face w-full h-full rounded-2xl shadow-xl bg-gradient-to-br ${t.cardGradient} flex flex-col items-center justify-center p-6 select-none`}>
             <p className="text-4xl font-bold text-white text-center mb-3">{word.spanish}</p>
             <button
               onClick={handleSpeak}

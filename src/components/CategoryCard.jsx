@@ -1,7 +1,9 @@
 import React from 'react';
 import ProgressBar from './ProgressBar';
+import { themes, defaultTheme } from '../data/themes';
 
-export default function CategoryCard({ category, mastered, total, onClick }) {
+export default function CategoryCard({ category, mastered, total, onClick, theme }) {
+  const t = themes[theme] || themes[defaultTheme];
   return (
     <div
       onClick={onClick}
@@ -14,7 +16,7 @@ export default function CategoryCard({ category, mastered, total, onClick }) {
           <p className="text-sm text-gray-500">{category.description}</p>
         </div>
       </div>
-      <ProgressBar value={mastered} max={total} color="bg-red-500" label="Mastered" />
+      <ProgressBar value={mastered} max={total} color={t.progressBar} label="Mastered" />
     </div>
   );
 }
